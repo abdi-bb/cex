@@ -8,15 +8,12 @@ int main()
 	long int c = a + b;
 
 	printf("%ld, %ld, ", a, b);
-
-	while(i < 50)
+	while(i < 98)
 	{
 		printf("%ld", c);
-		i++;
-
-		if(i < 50)
+		if (i < 98)
 			printf(", ");
-
+		i++;
 		a = b;
 		b = c;
 		c = a + b;
@@ -24,3 +21,4 @@ int main()
 	printf("\n");
 	return (0);
 }
+
