@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "lists.h"
 /**
- * main - check the code for Holberton School students.
+ * main - check the code 
  *
  * Return: Always 0.
  */
@@ -25,12 +25,12 @@ int main(void)
     new->next = head;
     head = new;
     n = print_list(head);
-    printf("-> %lu elements\n", n);
+    printf("-> %u elements\n", n);
     printf("\n");
     free(new->str);
     new->str = NULL;
     n = print_list(head);
-    printf("-> %lu elements\n", n);
+    printf("-> %u elements\n", n);
     free(new);
     return (0);
 }
