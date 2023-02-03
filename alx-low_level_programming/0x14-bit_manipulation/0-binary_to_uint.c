@@ -5,6 +5,22 @@
 unsigned int binary_to_uint(const char *b)
 {
     unsigned int d = 0;
+    unsigned int i;
+
+    if (b == NULL)
+        return (0);
+
+    for (i = 0; b[i]; i++)
+    {
+        if (b[i] != '0' && b[i] != '1')
+            return (0);
+
+        d = (d << 1) + (b[i] - '0'); /* d = (d * 2) + (b[i] - '0') */
+    }
+    return (d);
+}
+
+/*
     int i, j, len;
 
     for (i = 0; b[i]; i++)
@@ -22,7 +38,7 @@ unsigned int binary_to_uint(const char *b)
     return (d);
 
 }
-
+*/
 int main(void)
 {
     unsigned int n;
