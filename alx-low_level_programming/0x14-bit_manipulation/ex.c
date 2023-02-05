@@ -1,11 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int get_bit(unsigned long int n, unsigned int index)
 {
-    if (index >= sizeof(unsigned long int) * 8)
-        return (-1);
-
-    return (n & (1 << index));
+  if (index >= (sizeof(unsigned long int) * 8))
+    return (-1);
+    
+  return (n & (1 << index));
 }
 
 int main(void)
@@ -20,8 +22,3 @@ int main(void)
     printf("%d\n", n);
     return (0);
 }
-/*
-1
-1
-0
-*/
