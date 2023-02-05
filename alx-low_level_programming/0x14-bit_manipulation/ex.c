@@ -2,23 +2,44 @@
 #include <stdlib.h>
 #include <string.h>
 
-int get_bit(unsigned long int n, unsigned int index)
+listint_t *add_nodeint_end(listint_t **head, const int n)
 {
-  if (index >= (sizeof(unsigned long int) * 8))
-    return (-1);
-    
-  return (n & (1 << index));
-}
+  listint_t *new, *temp = (*head);
 
+  new = malloc(sizeof(listint_t));
+  if (new == NULL)
+    return (NULL);
+
+  new->n = n;
+  new->next = NULL;
+  if (*head == NULL)
+    {
+      (*head) = new;
+      return (new);
+    }
+
+  while(temp->next)
+  {
+    temp = temp->next;
+  }
+  temp->next = new;
+
+  return (new);
+}
 int main(void)
 {
-    int n;
+    listint_t *head;
 
-    n = get_bit(1024, 10);
-    printf("%d\n", n);
-    n = get_bit(98, 1);
-    printf("%d\n", n);
-    n = get_bit(1024, 0);
-    printf("%d\n", n);
+    head = NULL;
+    add_nodeint_end(&head, 0);
+    add_nodeint_end(&head, 1);
+    add_nodeint_end(&head, 2);
+    add_nodeint_end(&head, 3);
+    add_nodeint_end(&head, 4);
+    add_nodeint_end(&head, 98);
+    add_nodeint_end(&head, 402);
+    add_nodeint_end(&head, 1024);
+    print_listint(head);
     return (0);
 }
+
