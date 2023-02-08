@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-ssize_t read_textfile(const char *filename, size_t letters) {
+ssize_t read_textfile(const char *filename, size_t letters)
+{
     int fd;
     ssize_t read_bytes, written_bytes;
     char *buffer;
@@ -20,13 +21,15 @@ ssize_t read_textfile(const char *filename, size_t letters) {
         return 0;
 
     read_bytes = read(fd, buffer, letters);
-    if (read_bytes == -1) {
+    if (read_bytes == -1)
+    {
         free(buffer);
         return 0;
     }
 
     written_bytes = write(STDOUT_FILENO, buffer, read_bytes);
-    if (written_bytes == -1 || written_bytes != read_bytes) {
+    if (written_bytes == -1 || written_bytes != read_bytes)
+    {
         free(buffer);
         return 0;
     }
