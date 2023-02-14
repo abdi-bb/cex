@@ -7,15 +7,15 @@
 int main()
 {
 	pid_t pid;
-	char *buffer;
-	size_t n = 1024;
+	char buffer[];
+	// size_t n = 1024;
 
-	buffer = malloc(sizeof(char) * n);
+	// buffer = malloc(sizeof(char) * n);
 
 	while (1)
 	{
 		printf("$ ");
-		getline(&buffer, &n, stdin);
+		fgets(buffer, 1024, stdin);
 
 		char *args[1024];
 		char *token = strtok(buffer, " ");
@@ -31,8 +31,8 @@ int main()
 		pid = fork();
 		if (pid == 0)
 		{
-			execve(args[0], args, NULL);
-			perror("execve");
+			execvp(args[0], args, NULL);
+			perror("execvp");
 			exit(1);
 		}
 		else if (pid > 0)
