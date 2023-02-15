@@ -28,10 +28,17 @@ int main()
         }
         av[i] = NULL;
 
+        char *path = malloc(1024);
+        sprintf(path, "/usr/bin/which %s", av[0]);
+        FILE *which_output = popen(path, "r");
+        fgets(path, 1024, which_output);
+        path[strcspn(path, "\n")] = 0;
+        pclose(which_output);
+
         pid_t pid = fork();
         if (pid == 0) {
             // Child process
-            execve(av[0], av, NULL);
+            execve(path, av, NULL);
             perror("execve");
             exit(EXIT_FAILURE);
         } else if (pid < 0) {
@@ -40,7 +47,9 @@ int main()
             // Parent process
             wait(NULL);
         }
+        free(path);
     }
     free(buffer);
     exit(EXIT_SUCCESS);
 }
+
