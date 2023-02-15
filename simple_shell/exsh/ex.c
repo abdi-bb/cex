@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 int main()
 {
@@ -12,12 +12,11 @@ int main()
 	while (1)
 	{
 		printf("$ ");
-
 		read = getline(&buffer, &len, stdin);
 		if (read == -1)
 			break;
 
-	//	printf("%s", buffer);
+		//printf("%s", buffer);
 
 		char *av[len];
 		char *token = strtok(buffer, " ");
@@ -26,9 +25,13 @@ int main()
 		while (token)
 		{
 			av[i++] = token;
-			printf("%s\n", token);
+			//printf("%s ", token);
 			token = strtok(NULL, " ");
 		}
+		av[i] = NULL;
+
+		execve(av[0], av, NULL);
+		perror("execve");
 	}
 	free(buffer);
 	exit(EXIT_SUCCESS);
