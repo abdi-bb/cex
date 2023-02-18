@@ -1,40 +1,37 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
 
 int main()
 {
+	char *cmd = malloc(1024);
 	size_t len = 1024;
-	char *buffer = malloc(1024);
 	ssize_t read;
 
 	while (1)
 	{
 		printf("$ ");
-		read = getline(&buffer, &len, stdin);
+		read = getline(&cmd, &len, stdin);
 		if (read == -1)
 			break;
 
-		//printf("%s", buffer);
-
-		char *av[len];
-		char *token = strtok(buffer, " ");
+		char *args[len];
+		char *token = strtok(cmd, "\n");
 		int i = 0;
 
 		while (token)
 		{
-			av[i++] = token;
-			//printf("%s ", token);
-			token = strtok(NULL, " ");
+			args[i++] = token;
+			token = strtok(NULL, "\n");
 		}
-		av[i] = NULL;
+		args[i] = NULL;
 
 		pid_t pid = fork();
 		if (pid == 0)
 		{
-			execve(av[0], av, NULL);
+			execve(args[0], args, NULL);
 			perror("execve");
 		}
 		else if (pid > 0)
@@ -47,7 +44,7 @@ int main()
 			exit(EXIT_FAILURE);
 		}
 	}
-	free(buffer);
+	free(cmd);
 	exit(EXIT_SUCCESS);
 }
 

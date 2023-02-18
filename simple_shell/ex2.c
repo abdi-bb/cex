@@ -4,10 +4,12 @@
 #include <sys/wait.h>
 #include <string.h>
 
+#define SIZE 1024
+
 int main()
 {
 	pid_t pid;
-	char buffer[];
+	char buffer[SIZE];
 	// size_t n = 1024;
 
 	// buffer = malloc(sizeof(char) * n);
@@ -15,23 +17,25 @@ int main()
 	while (1)
 	{
 		printf("$ ");
-		fgets(buffer, 1024, stdin);
+		fgets(buffer, SIZE, stdin);
+		buffer[strlen(buffer) - 1] = '\0';
 
-		char *args[1024];
+		char *args[SIZE];
 		char *token = strtok(buffer, " ");
 
 		int i = 0;
-		while (token != NULL)
+		while (token)
 		{
-			args[i++] = token;
+			//args[i++] = token;
+			printf("%s\n", token);
 			token = strtok(NULL, " ");
 		}
-		args[i] = NULL;
+	/*	args[i] = NULL;
 
 		pid = fork();
 		if (pid == 0)
 		{
-			execvp(args[0], args, NULL);
+			execvp(args[0], args);
 			perror("execvp");
 			exit(1);
 		}
@@ -45,7 +49,8 @@ int main()
 			exit(1);
 		}
 	}
-	free(buffer);
+	//free(buffer);*/
+	}
 	return (0);
 }
 
