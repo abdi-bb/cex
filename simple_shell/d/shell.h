@@ -16,6 +16,200 @@
 #include <fcntl.h>
 
 extern char **environ;
+typedef int (*builtin_fp)(info_t *);
+
+/**
+ * struct builtin - builtin command
+ * @name: command name
+ * @f: function to call
+ * @help: command usage
+ * @desc: command description
+ */
+struct builtin
+{
+	const char *name;
+	builtin_fp f;
+	const char *help;
+	const char *desc;
+};
+/**
+ * enum cmdlist_sep_n - numeric values for commmand list separators
+ * @SEMICOLON: ;
+ * @AMPERSAND: &
+ * @AND: &&
+ * @OR: ||
+ */
+typedef enum cmdlist_sep_n
+{
+	SEMICOLON = 1,
+	AMPERSAND = 2,
+	AND       = 4,
+	OR        = 8
+} cmdlist_sep_n_t;
+
+/**
+ * struct cmdlist_sep - command list separator structure
+ * @sep: the command separator
+ * @n: the corresponding numeric value
+ */
+typedef struct cmdlist_sep
+{
+	const char *sep;
+	enum cmdlist_sep_n n;
+} cmdlist_sep_t;
+
+/**
+ * struct cmdlist - a linked list of commands
+ * @next: the next command
+ * @tree: a binary tree of commands
+ * @tokens: the tokens for each command in the tree
+ */
+struct cmdlist
+{
+	struct cmdlist *next;
+	struct cmdtree *tree;
+	char **tokens;
+};
+
+/**
+ * struct cmdtree - a binary tree of commands
+ * @success: the command to execute upon failure
+ * @failure: the command to execute upon success
+ * @tokens: a simple command with no separators
+ * @sep: the preceding list separator
+ */
+struct cmdtree
+{
+	struct cmdtree *success;
+	struct cmdtree *failure;
+	const char * const *tokens;
+	struct cmdlist_sep sep;
+};
+
+/**
+  * struct dict - singly linked list of key-value pairs
+  * @key: variable name
+  * @val: value of variable
+  * @next: pointer to the next node
+  */
+struct dict
+{
+	char *key;
+	char *val;
+	struct dict *next;
+};
+
+#define GETLINE_BUFFER_SIZE 4096
+
+/**
+ * struct buf_s - input buffer
+ * @buffer: the buffer
+ * @next: pointer to the next value
+ * @remaining: number of values remaining
+ */
+typedef struct buf_s
+{
+	char buffer[GETLINE_BUFFER_SIZE];
+	char *next;
+	size_t remaining;
+} buf_t;
+
+#define GETLINE_TABLE_SIZE 127
+
+/**
+ * struct buf_table_node_s - input buffer hash table
+ * @fd: file descriptor
+ * @buf: associated buffer
+ * @next: next buffer in chain
+ */
+typedef struct buf_table_node_s
+{
+	int fd;
+	struct buf_s buf;
+	struct buf_table_node_s *next;
+} buf_table_node_t;
+
+/**
+  * struct history - shell command history
+  * @head: a pointer to the head of the history list
+  * @filename: the name of the history to file
+  * @n: the number of entries in the history list
+  */
+struct history
+{
+	struct list *head;
+	char *filename;
+	size_t n;
+};
+
+/**
+  * struct info - shell state
+  * @interactive: arguments passed
+  * @argc: arguments passed
+  * @argv: arguments passed
+  * @file: arguments passed
+  * @fileno: arguments passed
+  * @status: arguments passed
+  * @line: arguments passed
+  * @lineno: arguments passed
+  * @tokens: arguments passed
+  * @pid: arguments passed
+  * @cwd: arguments passed
+  * @exe: arguments passed
+  * @env: arguments passed
+  * @path: arguments passed
+  * @aliases: arguments passed
+  * @history: arguments passed
+  * @commands: arguments passed
+  */
+struct info
+{
+	int interactive;
+	int argc;
+	char **argv;
+	char *file;
+	int fileno;
+	int status;
+	char *line;
+	size_t lineno;
+	char **tokens;
+	pid_t pid;
+	char *cwd;
+	char *exe;
+	env_t *env;
+	list_t *path;
+	alias_t *aliases;
+	history_t *history;
+	cmdlist_t *commands;
+};
+
+/**
+ * struct list - singly linked list
+ * @str: dynamically-allocated string
+ * @next: pointer to the next node
+ */
+struct list
+{
+	char *str;
+	struct list *next;
+};
+
+/**
+ * enum quote_state - a quote state mnemonic
+ * @QUOTE_NONE: In an unquoted sequence of blanks
+ * @QUOTE_WORD: In an unquoted sequence of non-blanks
+ * @QUOTE_DOUBLE: In double quotes
+ * @QUOTE_SINGLE: In single quotes
+ * @QUOTE_ESCAPE: Following a backslash
+ */
+typedef enum quote_state
+{
+	QUOTE_NONE   = 0x0,
+	QUOTE_WORD   = 0x1,
+	QUOTE_DOUBLE = 0x2,
+	QUOTE_SINGLE = 0x4,
+	QUOTE_ESCAPE = 0x8
+} quote_state_t;
 
 bool read_input(info_t *info);
 quote_state_t _read_input(char **lineptr, int fd);
@@ -146,21 +340,6 @@ typedef dict_t alias_t;
 
 typedef int (*builtin_fp)(info_t *);
 
-/**
- * struct builtin - builtin command
- * @name: command name
- * @f: function to call
- * @help: command usage
- * @desc: command description
- */
-struct builtin
-{
-	const char *name;
-	builtin_fp f;
-	const char *help;
-	const char *desc;
-};
-
 const struct builtin *get_builtin(const char *name);
 const struct builtin *get_builtins(void);
 
@@ -175,59 +354,6 @@ int __setenv(info_t *info);
 int __unsetenv(info_t *info);
 
 /* command */
-/**
- * enum cmdlist_sep_n - numeric values for commmand list separators
- * @SEMICOLON: ;
- * @AMPERSAND: &
- * @AND: &&
- * @OR: ||
- */
-typedef enum cmdlist_sep_n
-{
-	SEMICOLON = 1,
-	AMPERSAND = 2,
-	AND       = 4,
-	OR        = 8
-} cmdlist_sep_n_t;
-
-/**
- * struct cmdlist_sep - command list separator structure
- * @sep: the command separator
- * @n: the corresponding numeric value
- */
-typedef struct cmdlist_sep
-{
-	const char *sep;
-	enum cmdlist_sep_n n;
-} cmdlist_sep_t;
-
-/**
- * struct cmdlist - a linked list of commands
- * @next: the next command
- * @tree: a binary tree of commands
- * @tokens: the tokens for each command in the tree
- */
-struct cmdlist
-{
-	struct cmdlist *next;
-	struct cmdtree *tree;
-	char **tokens;
-};
-
-/**
- * struct cmdtree - a binary tree of commands
- * @success: the command to execute upon failure
- * @failure: the command to execute upon success
- * @tokens: a simple command with no separators
- * @sep: the preceding list separator
- */
-struct cmdtree
-{
-	struct cmdtree *success;
-	struct cmdtree *failure;
-	const char * const *tokens;
-	struct cmdlist_sep sep;
-};
 
 cmdlist_t *cmd_to_list(const char *cmd);
 cmdlist_t *_cmd_to_list(cmdlist_t **tailptr, char *split, size_t count);
@@ -253,18 +379,6 @@ bool _isquote(int c);
 bool _isnumber(const char *s);
 
 /* dict */
-/**
-  * struct dict - singly linked list of key-value pairs
-  * @key: variable name
-  * @val: value of variable
-  * @next: pointer to the next node
-  */
-struct dict
-{
-	char *key;
-	char *val;
-	struct dict *next;
-};
 
 char *get_dict_val(dict_t *head, const char *key);
 dict_t *get_dict_node(dict_t *head, const char *key);
@@ -282,110 +396,17 @@ void perrorl(const char *msg, ...);
 void perrorl_default(const char *arg0, size_t lineno, const char *msg, ...);
 
 /* getline */
-#define GETLINE_BUFFER_SIZE 4096
-
-/**
- * struct buf_s - input buffer
- * @buffer: the buffer
- * @next: pointer to the next value
- * @remaining: number of values remaining
- */
-typedef struct buf_s
-{
-	char buffer[GETLINE_BUFFER_SIZE];
-	char *next;
-	size_t remaining;
-} buf_t;
-
-#define GETLINE_TABLE_SIZE 127
-
-/**
- * struct buf_table_node_s - input buffer hash table
- * @fd: file descriptor
- * @buf: associated buffer
- * @next: next buffer in chain
- */
-typedef struct buf_table_node_s
-{
-	int fd;
-	struct buf_s buf;
-	struct buf_table_node_s *next;
-} buf_table_node_t;
 
 typedef buf_table_node_t *buf_table_t[GETLINE_TABLE_SIZE];
 
 char *_getline(const int fd);
 
 /* history */
-/**
-  * struct history - shell command history
-  * @head: a pointer to the head of the history list
-  * @filename: the name of the history to file
-  * @n: the number of entries in the history list
-  */
-struct history
-{
-	struct list *head;
-	char *filename;
-	size_t n;
-};
-
-/* info */
-/**
-  * struct info - shell state
-  * @interactive: arguments passed
-  * @argc: arguments passed
-  * @argv: arguments passed
-  * @file: arguments passed
-  * @fileno: arguments passed
-  * @status: arguments passed
-  * @line: arguments passed
-  * @lineno: arguments passed
-  * @tokens: arguments passed
-  * @pid: arguments passed
-  * @cwd: arguments passed
-  * @exe: arguments passed
-  * @env: arguments passed
-  * @path: arguments passed
-  * @aliases: arguments passed
-  * @history: arguments passed
-  * @commands: arguments passed
-  */
-struct info
-{
-	int interactive;
-	int argc;
-	char **argv;
-	char *file;
-	int fileno;
-	int status;
-	char *line;
-	size_t lineno;
-	char **tokens;
-	pid_t pid;
-	char *cwd;
-	char *exe;
-	env_t *env;
-	list_t *path;
-	alias_t *aliases;
-	history_t *history;
-	cmdlist_t *commands;
-};
 
 info_t *init_info(int argc, char **argv);
 int free_info(info_t *info);
 
 /* list */
-/**
- * struct list - singly linked list
- * @str: dynamically-allocated string
- * @next: pointer to the next node
- */
-struct list
-{
-	char *str;
-	struct list *next;
-};
 
 list_t *str_to_list(const char *str, char delim);
 list_t *_str_to_list(list_t **tailptr, const char *str, char delim);
@@ -397,22 +418,6 @@ void free_list(list_t **headptr);
 char *search_path(info_t *info, list_t *path);
 
 /* quote */
-/**
- * enum quote_state - a quote state mnemonic
- * @QUOTE_NONE: In an unquoted sequence of blanks
- * @QUOTE_WORD: In an unquoted sequence of non-blanks
- * @QUOTE_DOUBLE: In double quotes
- * @QUOTE_SINGLE: In single quotes
- * @QUOTE_ESCAPE: Following a backslash
- */
-typedef enum quote_state
-{
-	QUOTE_NONE   = 0x0,
-	QUOTE_WORD   = 0x1,
-	QUOTE_DOUBLE = 0x2,
-	QUOTE_SINGLE = 0x4,
-	QUOTE_ESCAPE = 0x8
-} quote_state_t;
 
 typedef size_t (*quote_state_fp)(const char *, quote_state_t *);
 
