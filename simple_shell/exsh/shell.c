@@ -18,22 +18,24 @@ int main()
             break;
 
         char *av[len];
-        char *token = strtok(buffer, " ");
+        char *token = strtok(buffer, " \n");
         int i = 0;
 
         while (token)
         {
             av[i++] = token;
-            token = strtok(NULL, " ");
+            token = strtok(NULL, " \n");
         }
         av[i] = NULL;
+	if (strcmp(av[0], "exit") == 0 && (av[1] == NULL))
+		exit(0);
 
         char *path = malloc(1024);
-        sprintf(path, "/usr/bin/which %s", av[0]);
-        FILE *which_output = popen(path, "r");
-        fgets(path, 1024, which_output);
-        path[strcspn(path, "\n")] = 0;
-        pclose(which_output);
+	sprintf(path, "/usr/bin/which %s", av[0]);
+	FILE *which_output = popen(path, "r");
+	fgets(path, 1024, which_output);
+	path[strcspn(path, "\n")] = 0;
+	pclose(which_output);
 
         pid_t pid = fork();
         if (pid == 0) {
