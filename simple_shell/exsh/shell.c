@@ -27,8 +27,6 @@ int main()
             token = strtok(NULL, " \n");
         }
         av[i] = NULL;
-	if (strcmp(av[0], "exit") == 0 && (av[1] == NULL))
-		exit(0);
 
         char *path = malloc(1024);
 	sprintf(path, "/usr/bin/which %s", av[0]);
