@@ -1,75 +1,93 @@
 #include "shell.h"
 
-char **_copyenv(void);
-void free_env(void);
-char **_getenv(const char *var);
+/**
+ * get_environ - returns the string array copy of our environ
+ * @info: Structure containing potential arguments. Used to maintain
+ *          constant function prototype.
+ * Return: Always 0
+ */
+char **get_environ(info_t *info)
+{
+	if (!info->environ || info->env_changed)
+	{
+		info->environ = list_to_strings(info->env);
+		info->env_changed = 0;
+	}
+
+	return (info->environ);
+}
 
 /**
- * _copyenv - Creates a copy of the environment.
- *
- * Return: If an error occurs - NULL.
- *         O/w - a double pointer to the new copy.
+ * _unsetenv - Remove an environment variable
+ * @info: Structure containing potential arguments. Used to maintain
+ *        constant function prototype.
+ *  Return: 1 on delete, 0 otherwise
+ * @var: the string env var property
  */
-char **_copyenv(void)
+int _unsetenv(info_t *info, char *var)
 {
-	char **new_environ;
-	size_t size;
-	int index;
+	list_t *node = info->env;
+	size_t i = 0;
+	char *p;
 
-	for (size = 0; environ[size]; size++)
-		;
+	if (!node || !var)
+		return (0);
 
-	new_environ = malloc(sizeof(char *) * (size + 1));
-	if (!new_environ)
-		return (NULL);
-
-	for (index = 0; environ[index]; index++)
+	while (node)
 	{
-		new_environ[index] = malloc(_strlen(environ[index]) + 1);
-
-		if (!new_environ[index])
+		p = starts_with(node->str, var);
+		if (p && *p == '=')
 		{
-			for (index--; index >= 0; index--)
-				free(new_environ[index]);
-			free(new_environ);
-			return (NULL);
+			info->env_changed = delete_node_at_index(&(info->env), i);
+			i = 0;
+			node = info->env;
+			continue;
 		}
-		_strcpy(new_environ[index], environ[index]);
+		node = node->next;
+		i++;
 	}
-	new_environ[index] = NULL;
-
-	return (new_environ);
+	return (info->env_changed);
 }
 
 /**
- * free_env - Frees the the environment copy.
+ * _setenv - Initialize a new environment variable,
+ *             or modify an existing one
+ * @info: Structure containing potential arguments. Used to maintain
+ *        constant function prototype.
+ * @var: the string env var property
+ * @value: the string env var value
+ *  Return: Always 0
  */
-void free_env(void)
+int _setenv(info_t *info, char *var, char *value)
 {
-	int index;
+	char *buf = NULL;
+	list_t *node;
+	char *p;
 
-	for (index = 0; environ[index]; index++)
-		free(environ[index]);
-	free(environ);
-}
+	if (!var || !value)
+		return (0);
 
-/**
- * _getenv - Gets an environmental variable from the PATH.
- * @var: The name of the environmental variable to get.
- *
- * Return: If the environmental variable does not exist - NULL.
- *         Otherwise - a pointer to the environmental variable.
- */
-char **_getenv(const char *var)
-{
-	int index, len;
-
-	len = _strlen(var);
-	for (index = 0; environ[index]; index++)
+	buf = malloc(_strlen(var) + _strlen(value) + 2);
+	if (!buf)
+		return (1);
+	_strcpy(buf, var);
+	_strcat(buf, "=");
+	_strcat(buf, value);
+	node = info->env;
+	while (node)
 	{
-		if (_strncmp(var, environ[index], len) == 0)
-			return (&environ[index]);
+		p = starts_with(node->str, var);
+		if (p && *p == '=')
+		{
+			free(node->str);
+			node->str = buf;
+			info->env_changed = 1;
+			return (0);
+		}
+		node = node->next;
 	}
-
-	return (NULL);
+	add_node_end(&(info->env), buf, 0);
+	free(buf);
+	info->env_changed = 1;
+	return (0);
 }
