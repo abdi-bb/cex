@@ -1,1 +1,1 @@
-This repo contains personal exercises to learn programming.
+# Programming exercises on c programming language.
