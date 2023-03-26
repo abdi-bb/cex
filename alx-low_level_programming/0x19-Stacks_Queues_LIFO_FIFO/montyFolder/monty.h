@@ -11,7 +11,7 @@ typedef struct Node
     struct Node *next;
 } node;
 
-// node *top;
+node *top;
 
 void push(int x);
 void display();
