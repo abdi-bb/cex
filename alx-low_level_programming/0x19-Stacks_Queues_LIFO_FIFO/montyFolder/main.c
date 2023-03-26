@@ -11,14 +11,15 @@ int main(int ac, char *av[])
 
     fp = fopen(av[1], "r");
 
-    while (getline(&cmd, &len, fp) == EOF)
+    while (getline(&cmd, &len, fp) != EOF)
     {
         token = strtok(cmd, " \n");
         while (token)
         {
-            args[++i] = token;
+            args[i++] = token;
             token = strtok(NULL, " \n");
         }
+        args[i] = NULL;
         if (strcmp(args[0], "push") == 0)
         {
             push(atoi(args[1]));
@@ -39,9 +40,9 @@ int main(int ac, char *av[])
         {
             add();
         }
-        fclose(fp);
-        free(cmd);
-        return (0);
     }
+    fclose(fp);
+    free(cmd);
+    return (0);
     
 }
