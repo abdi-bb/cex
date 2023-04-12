@@ -1,1 +1,1 @@
-# Programs written on c programming language
+# Programming exercises on c programming language

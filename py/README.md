@@ -1,1 +1,1 @@
-# Programming execises using python language.
+# Programming exercises using python language.
