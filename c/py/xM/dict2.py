@@ -1,0 +1,18 @@
+user = {'name': 'Abdi', 'age': 20}
+print(user.get('age', 55))
+print(user.get('sex', 'Male'))
+print(user.get('sex'))
+# print(user['sex'])
+print('name' in user.keys())
+print('name' in user)
+print(20 in user.values())
+print(user.items())
+user.clear()
+print(user)
+
+user2 = dict(key='value')
+print(user2)
+print(user2.update({'key': 'value2'}))
+print(user2)
+user2.update({'key3': 'value3'})
+print(user2)
