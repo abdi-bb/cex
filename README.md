@@ -1,1 +1,1 @@
-# Programming exercises on c programming language.
+# Programming exercises 
