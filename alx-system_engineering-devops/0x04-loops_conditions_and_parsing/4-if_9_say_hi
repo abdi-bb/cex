@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# printing a given text using while loop
+# while and if
 
 count=0
 while [ $count -le 9 ]; do
-	echo "Best School"
+	echo "Best school"
 	if [ $count -eq 8 ]; then
 		echo "Hi"
 	fi
