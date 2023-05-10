@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# printing a given text using while loop
+
+count=0
+while [ $count -le 9 ]; do
+	echo "Best School"
+	count=$((count+1))
+done

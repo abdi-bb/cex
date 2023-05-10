@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# ls command
+
+for ls in `ls`; do
+	if [ -f "$ls" ]; then
+		name=$(echo "$ls" | cut -d'-' -f2-)
+		echo "$name"
+	fi
+done

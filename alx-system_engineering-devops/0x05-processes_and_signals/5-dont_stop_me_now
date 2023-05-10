@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# stopping a process
+
+#pro_id="pidof 4-to_infinity_and_beyond"
+#kill "$pro_id"
+kill "$(pgrep -f 4-to_infinity_and_beyond)"

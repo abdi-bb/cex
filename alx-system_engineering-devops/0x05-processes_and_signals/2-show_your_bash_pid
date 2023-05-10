@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Displays list of processes
+# shellcheck disable=SC2009
+
+ps -ef | grep bash | grep -v grep

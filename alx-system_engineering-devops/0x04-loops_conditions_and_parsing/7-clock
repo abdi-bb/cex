@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# hour and minute
+
+hour=0
+while [ $hour -le 12 ]; do
+	minute=0
+	while [ $minute -le 59 ]; do
+		if [ $minute -eq 0 ]; then
+			echo "Hour: $((hour/10))$((hour%10))"
+		else
+			echo "$((hour/10))$((hour%10)):$((minute/10))$((minute%10))"
+		fi
+		minute=$((minute+1))
+	done
+	hour=$((hour+1))
+done
