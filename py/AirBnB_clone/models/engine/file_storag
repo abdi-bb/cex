@@ -27,9 +27,9 @@ class FileStorage:
                 obj_dict = json.load(f)
                 for k, v in obj_dict.items():
                     class_name, obj_id = k.split('.')
-                    obj_dict['__class__'] = class_name
+                    v['__class__'] = class_name
                     cls_obj = eval(class_name)
-                    init_cls_obj = cls_obj(**obj_dict)
+                    init_cls_obj = cls_obj(**v)
                     #obj = eval(class_name)(**obj_dict)
                     self.__objects[k] = init_cls_obj
         except Exception:
