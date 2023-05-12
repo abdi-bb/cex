@@ -70,8 +70,12 @@ class HBNBCommand(cmd.Cmd):
         except Exception as e:
             print(e)
 
-
-
+    def do_destroy(self, line):
+        args = line.split()
+        if len(args) == 0:
+            print('** class name missing **')
+        else:
+            pass
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
