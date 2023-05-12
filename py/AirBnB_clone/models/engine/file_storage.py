@@ -33,7 +33,9 @@ class FileStorage():
                 for key, obj_dict in obj_dict.items():
                     class_name, obj_id = key.split('.')
                     obj_dict['__class__'] = class_name
-                    obj = eval(class_name)(**obj_dict)
+                    cls_obj = eval(class_name)
+                    obj = cls_obj(**obj_dict)
+                    #obj = eval(class_name)(**obj_dict)
                     self.__objects[key] = obj
         except Exception:
             pass
