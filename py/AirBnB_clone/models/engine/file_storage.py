@@ -8,6 +8,7 @@ import json
 from models.base_model import BaseModel
 from models.user import User
 
+
 class FileStorage():
     '''class FileStorage'''
     __file_path = 'file.json'
@@ -36,7 +37,7 @@ class FileStorage():
                     obj_dict['__class__'] = class_name
                     cls_obj = eval(class_name)
                     obj = cls_obj(**obj_dict)
-                    #obj = eval(class_name)(**obj_dict)
+                    # obj = eval(class_name)(**obj_dict)
                     self.__objects[key] = obj
         except Exception:
             pass

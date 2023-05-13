@@ -16,6 +16,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
+
 class HBNBCommand(cmd.Cmd):
     '''Command Interpreter class'''
 
@@ -81,7 +82,7 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print('** class name missing **')
             return
-        
+
         class_name = args[0]
         if class_name not in [c.__name__ for c in HBNBCommand.available_classes]:
             print("** class doesn't exist **")
@@ -110,7 +111,8 @@ class HBNBCommand(cmd.Cmd):
         else:
             try:
                 cls = eval(arg)
-                objs = [obj for obj in models.storage.all().values() if type(obj) == cls]
+                objs = [obj for obj in models.storage.all().values()
+                        if type(obj) == cls]
             except NameError:
                 print("** class doesn't exist **")
                 return
@@ -155,6 +157,7 @@ class HBNBCommand(cmd.Cmd):
         obj = objs[key]
         setattr(obj, attr_name, value)
         obj.save()
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
