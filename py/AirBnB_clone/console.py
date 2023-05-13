@@ -9,13 +9,13 @@ import cmd
 import models
 from models.base_model import BaseModel
 import shlex
-
+from models.user import User
 
 class HBNBCommand(cmd.Cmd):
     '''Command Interpreter class'''
 
     prompt = '(hbnb) '
-    available_classes = [BaseModel]
+    available_classes = [BaseModel, User]
 
     def do_quit(self, line):
         '''Quit command to exit the program

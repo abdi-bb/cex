@@ -11,7 +11,7 @@ from models.user import User
 class FileStorage():
     '''class FileStorage'''
     __file_path = 'file.json'
-    __objects = {}
+    __objects = {'BaseModel': BaseModel, 'User': User}
 
     def all(self):
         return self.__objects
