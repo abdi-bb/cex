@@ -15,29 +15,29 @@ class FileStorage():
     __objects = {}
 
     def all(self):
-        return self.__objects
+        return FileStorage.__objects
 
     def new(self, obj):
         key = f'{obj.__class__.__name__}.{obj.id}'
-        self.__objects[key] = obj
+        FileStorage.__objects[key] = obj
 
     def save(self):
         obj_dict = {}
-        for k, obj in self.__objects.items():
+        for k, obj in FileStorage.__objects.items():
             obj_dict[k] = obj.to_dict()
-        with open(self.__file_path, "w", encoding='utf-8') as f:
+        with open(FileStorage.__file_path, "w", encoding='utf-8') as f:
             json.dump(obj_dict, f)
 
     def reload(self):
         try:
-            with open(self.__file_path, 'r', encoding='utf-8') as f:
+            with open(FileStorage.__file_path, 'r', encoding='utf-8') as f:
                 obj_dict = json.load(f)
-                for key, obj_dict in obj_dict.items():
+                for key, value in obj_dict.items():
                     class_name, obj_id = key.split('.')
-                    obj_dict['__class__'] = class_name
+                    value['__class__'] = class_name
                     cls_obj = eval(class_name)
-                    obj = cls_obj(**obj_dict)
-                    # obj = eval(class_name)(**obj_dict)
-                    self.__objects[key] = obj
+                    obj = cls_obj(**value)
+                    # obj = eval(class_name)(**value)
+                    FileStorage.__objects[key] = obj
         except Exception:
             pass
