@@ -1,39 +1,45 @@
 #include "sort.h"
 
-/**
- * insertion_sort_list - sorts a doubly linked list of integers in ascending
- *                        order using the Insertion sort algorithm.
- * @list: Double pointer to the head of the list.
- */
-
 void insertion_sort_list(listint_t **list)
 {
-	listint_t *current, *prev, *temp;
+    int i, j;
 
-	if (list == NULL || *list == NULL)
-		return;
+    int size = sizeof(list) / sizeof(list[0]);
 
-	current = (*list)->next;
-	while (current != NULL)
-	{
-		prev = current->prev;
-		while (prev != NULL && prev->n > current->n)
-		{
-			temp = prev->prev;
-			prev->next = current->next;
-			if (current->next != NULL)
-				current->next->prev = prev;
-			current->next = prev;
-			prev->prev = current;
-			current->prev = temp;
-			if (temp != NULL)
-				temp->next = current;
-			else
-				*list = current;
-			prev = current->prev;
-			print_list(*list);
-		}
-		current = current->next;
-	}
+    for (i = 1; i < size; i++)
+    {
+        for (j = 1; j < size; j++)
+        {
+            int k = j;
+
+            while (list[k] < list[k + 1] && k > 0)
+            {
+                listint_t *tmp;
+
+                tmp = list[k];
+                list[k] = list[k + 1];
+                list[k + 1] = tmp;
+                k -= 1;
+                print_list(list);
+            }
+            
+        }
+    }
 }
 
+/*
+#!/usr/bin/python3
+
+
+def insertion(array):
+    for i in range(1, len(array)):
+        j = i
+        while array[j] < array[j - 1] and j > 0:
+            array[j], array[j - 1] = array[j - 1], array[j]
+            j -= 1
+    return array
+
+
+if __name__ == '__main__':
+    insertion(array)
+*/

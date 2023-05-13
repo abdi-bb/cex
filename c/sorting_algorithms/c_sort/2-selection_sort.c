@@ -1,35 +1,77 @@
 #include "sort.h"
 
-/**
- * selection_sort - Sorts an array of integers in ascending order using
- * the Selection sort algorithm
- * @array: The array to be sorted
- * @size: The size of the array
- */
+/*
 void selection_sort(int *array, size_t size)
 {
-	size_t i, j, min_idx;
-	int temp;
+    size_t i, j, k, m;
 
-	if (array == NULL || size < 2)
-		return;
+    for (k = 0; k < size; k++)
+    {
+        for (i = 0; i < size; i++)
+        {
+            int smallestValue = array[i];
+            int smallestIdx = i;
+            for (m = 0; m < i + 1; m++)
+            {
+                for (j = i + 1; j < size; j++)
+                {
+                    if (array[j] < smallestValue)
+                    {
+                        smallestValue = array[j];
+                        smallestIdx = j;
+                    }
+                }
+            }
+        }
+    
+        int tmp;
+        tmp = array[k];
+        array[k] = array[smallestIdx];
+        array[smallestIdx] = array[k];
+        print_array(array, size);
+    }
+}
+*/
 
-	for (i = 0; i < size - 1; i++)
+void selection_sort(int *array, size_t size)
+{
+	size_t i, j;
+	int tmp;
+
+	for (i = 0; i < size; i++)
 	{
-		min_idx = i;
+		int smallestValue = array[i];
+		size_t smallestIndex = i;
 		for (j = i + 1; j < size; j++)
 		{
-			if (array[j] < array[min_idx])
-				min_idx = j;
+			if (array[j] < smallestValue)
+			{
+				smallestValue = array[j];
+				smallestIndex = j;
+			}
 		}
-		if (min_idx != i)
-		{
-			temp = array[i];
-			array[i] = array[min_idx];
-			array[min_idx] = temp;
-
-			print_array(array, size);
-		}
+		tmp = array[i];
+		array[i] = array[smallestIndex];
+		array[smallestIndex] = tmp;
+		print_array(array, size);
 	}
 }
 
+/*
+
+def selection(array):
+    for i in range(len(array)):
+        smallestValue = array[i]
+        smallestIndex = i
+        for j in range(i + 1, len(array)):
+                if array[j] < smallestValue:
+                    smallestValue = array[j]
+                    smallestIndex = j
+        array[i], array[smallestIndex] = array[smallestIndex], array[i]
+    return array
+
+
+
+if __name__ == '__main__':
+    selection(array)
+*/
