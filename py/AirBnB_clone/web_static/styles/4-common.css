@@ -1,0 +1,20 @@
+/*
+ ============================================
+ Common
+ ============================================
+ */
+body {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	min-height: 100vh;
+	margin: 0;
+	padding: 0;
+	font: 14px Circular,"Helvetica Neue",Helvetica,Arial,sans-serif #484848;
+}
+.container {
+	display: flex;
+	max-width: 1000px;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
